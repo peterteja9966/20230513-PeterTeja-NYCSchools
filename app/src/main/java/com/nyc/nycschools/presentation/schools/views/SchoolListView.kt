@@ -12,6 +12,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.nyc.nycschools.data.domain.models.School
 import com.nyc.nycschools.presentation.nav.Screen
+import com.nyc.nycschools.presentation.schools.SchoolListState
 import com.nyc.nycschools.presentation.theme.NYCSchoolsTheme
 import com.nyc.nycschools.presentation.theme.Typography
 import com.nyc.nycschools.presentation.viewmodel.SchoolViewModel
@@ -36,70 +40,24 @@ fun SchoolHomeContent(
     viewModel: SchoolViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-    if (state.schools.isEmpty() && state.error.isBlank()) { // change this to state
-        // as when initial load you see empty text and when-- set the empty state to object
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "No Schools here, try again",
-                color = MaterialTheme.colors.error,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            )
-        }
-    } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
-            contentPadding =
-            PaddingValues(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            )
-        ) {
-            items(state.schools) { school ->
-                SchoolListItem(
-                    school = school,
-                    onItemClick = {
-                        val route = Screen.schoolDetailsRoute(school.id)
-                        navController.navigate(
-                            route = route
-                        )
-                    }
-                )
-            }
-        }
-    }
-    if (state.error.isNotBlank()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = state.error,
-                color = MaterialTheme.colors.error,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            )
-        }
+    val isInitialLoad = remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        isInitialLoad.value = true
     }
-    if (state.isLoading) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        if (isInitialLoad.value && state.isLoading) {
+            loadingIndicator()
+        } else if (state.schools.isEmpty()) {
+            emptyListMessage()
+        } else if (state.error.isNotBlank()) {
+            errorMessage(state = state)
+        } else {
+            lazyList(state = state, navController = navController)
         }
     }
 }
@@ -136,6 +94,79 @@ fun SchoolListItem(
                 Text(text = school.zip, style = Typography.body1, color = Color.Black)
             }
         }
+    }
+}
+
+@Composable
+fun lazyList(state: SchoolListState, navController: NavController) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        contentPadding =
+        PaddingValues(
+            horizontal = 16.dp,
+            vertical = 8.dp
+        )
+    ) {
+        items(state.schools) { school ->
+            SchoolListItem(
+                school = school,
+                onItemClick = {
+                    val route = Screen.schoolDetailsRoute(school.id)
+                    navController.navigate(
+                        route = route
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun emptyListMessage() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "No Schools here, try again",
+            color = MaterialTheme.colors.error,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        )
+    }
+}
+
+@Composable
+fun errorMessage(state: SchoolListState) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = state.error,
+            color = MaterialTheme.colors.error,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        )
+    }
+}
+
+@Composable
+fun loadingIndicator() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
     }
 }
 
