@@ -8,5 +8,4 @@ import com.nyc.nycschools.data.dto.Schools
  */
 interface SchoolRepository {
     suspend fun getSchools(): List<SchoolDto>
-    suspend fun getSchoolById(id: String): SchoolDto
 }

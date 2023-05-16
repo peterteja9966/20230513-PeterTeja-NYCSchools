@@ -84,6 +84,38 @@ fun SchoolDetail(school: School) {
             style = MaterialTheme.typography.body1,
             color = Color.Black
         )
+        if(school.english?.isNotEmpty() == true){
+            Text(
+                text = "English: "+school.english,
+                style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+        }
+
+        if(school.math?.isNotEmpty() == true){
+            Text(
+                text = "Math: "+school.math,
+                style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+        }
+
+        if(school.science?.isNotEmpty() == true){
+            Text(
+                text = "Science :"+school.science,
+                style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+        }
+
+        if(school.social?.isNotEmpty() == true){
+            Text(
+                text = "Social: "+school.social,
+                style = MaterialTheme.typography.body1,
+                color = Color.Black
+            )
+        }
+
         Text(
             text = "City: ${school.city}",
             style = MaterialTheme.typography.body1,

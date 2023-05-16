@@ -179,7 +179,11 @@ fun ItemPreview() {
                 schoolName = "NYC School",
                 city = "This is to test  school metadata",
                 zip = "8247070294",
-                id = "123"
+                id = "123",
+                math = "123",
+                social = "256",
+                science = "67",
+                english = "67"
             )
 
         SchoolListItem(school = school, onItemClick = {})

@@ -13,8 +13,4 @@ class SchoolListRepoImpl @Inject constructor(private val service: NYCService) : 
     override suspend fun getSchools(): List<SchoolDto> {
         return service.getSchools()
     }
-
-    override suspend fun getSchoolById(id: String): SchoolDto {
-        return SchoolDto(school_name = "", zip = "", city = "", dbn = id)
-    }
 }
