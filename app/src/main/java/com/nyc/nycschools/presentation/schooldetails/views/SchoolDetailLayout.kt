@@ -2,10 +2,7 @@ package com.nyc.nycschools.presentation.schooldetails.views
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,10 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nyc.nycschools.data.domain.models.School
-import com.nyc.nycschools.presentation.theme.NYCSchoolsTheme
+import com.nyc.nycschools.presentation.schooldetails.states.SchoolDetailsState
+import com.nyc.nycschools.presentation.schools.views.loadingIndicator
 import com.nyc.nycschools.presentation.viewmodel.SchoolViewModel
 
 /**
@@ -36,88 +34,65 @@ fun SchoolDetail(viewModel: SchoolViewModel = hiltViewModel(), id: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         state.school?.let { school ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = school.schoolName,
-                    style = MaterialTheme.typography.body2,
-                    color = Color.Black,
-                    maxLines = 1
-                )
-                Text(
-                    text = "ID: ${school.id}",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Black
-                )
-                Text(
-                    text = "City: ${school.city}",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Black
-                )
-                Text(
-                    text = "Zip: ${school.zip}",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Black
-                )
-            }
+            SchoolDetail(school = school)
         }
         if (state.isLoading) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator()
-            }
+            loadingIndicator()
+        } else if (state.error.isNotBlank()) {
+            errorMessage(state = state)
         }
     }
 }
 
-
 @Composable
-fun SchoolDetail1(school: School) {
+fun errorMessage(state: SchoolDetailsState) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = school.schoolName,
-            style = MaterialTheme.typography.body2
-        )
-        Text(
-            text = school.id,
-            style = MaterialTheme.typography.body1
-        )
-        Text(
-            text = school.city,
-            style = MaterialTheme.typography.body1
-        )
-        Text(
-            text = school.zip,
-            style = MaterialTheme.typography.body1
+            text = state.error,
+            color = MaterialTheme.colors.error,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
         )
     }
 }
 
-
-@Preview(showBackground = true)
 @Composable
-fun DetailsPreview() {
-    NYCSchoolsTheme {
-        val school = School(
-            schoolName = "Test1",
-            zip = "1234",
-            id = "34567",
-            city = "djkfhkjdshfj"
+fun SchoolDetail(school: School) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            textAlign = TextAlign.Center,
+            text = school.schoolName,
+            style = MaterialTheme.typography.body2,
+            color = Color.Black,
+            maxLines = 1
         )
-        SchoolDetail1(school)
+        Text(
+            text = "ID: ${school.id}",
+            style = MaterialTheme.typography.body1,
+            color = Color.Black
+        )
+        Text(
+            text = "City: ${school.city}",
+            style = MaterialTheme.typography.body1,
+            color = Color.Black
+        )
+        Text(
+            text = "Zip: ${school.zip}",
+            style = MaterialTheme.typography.body1,
+            color = Color.Black
+        )
     }
 }

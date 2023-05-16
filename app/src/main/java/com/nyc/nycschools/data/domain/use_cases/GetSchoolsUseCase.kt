@@ -13,6 +13,7 @@ import javax.inject.Inject
 /**
  * Created by peterx.theja on 2023-05-13.
  */
+//a domain layer to seggregate the positive and negative cases coming from repo
 open class GetSchoolsUseCase @Inject constructor(
     private val repository: SchoolRepository
 ) {

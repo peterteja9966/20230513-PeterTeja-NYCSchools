@@ -33,8 +33,8 @@ class SchoolViewModel
     init {
         loadSchools()
     }
-
-    fun loadSchools() {
+// handling each different flow in presenter handle data coming from domain layer
+    private fun loadSchools() {
         getSchoolsUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
@@ -51,12 +51,18 @@ class SchoolViewModel
             }
         }.launchIn(viewModelScope)
     }
-
+//getting each school metadata from the previous screen state by id of school and avoding to make another API call to get details of school by
+    //finding the right object that user had clicked and modifying the state of detail layout to render the data accordingly
     fun getSchoolById(id: String) {
         _detailState.value = _detailState.value.copy(isLoading = true)
-        _detailState.value = _detailState.value.copy(
+        val updatedState = _detailState.value.copy(
             school = state.value.schools.find { it.id == id }
         )
+        _detailState.value = if (updatedState.school != null) {
+            updatedState
+        } else {
+            updatedState.copy(error = "Invalid id") // when there is a invalid code which cannot be part of the list state which compose the view with error
+        }
     }
 
 }
