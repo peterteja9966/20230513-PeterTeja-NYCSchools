@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nyc.nycschools.data.domain.models.School
 import com.nyc.nycschools.presentation.schooldetails.states.SchoolDetailsState
-import com.nyc.nycschools.presentation.schools.views.loadingIndicator
+import com.nyc.nycschools.presentation.schools.views.LoadingIndicator
 import com.nyc.nycschools.presentation.viewmodel.SchoolViewModel
 
 /**
@@ -24,6 +24,7 @@ import com.nyc.nycschools.presentation.viewmodel.SchoolViewModel
 @ExperimentalAnimationApi
 @Composable
 fun SchoolDetail(viewModel: SchoolViewModel = hiltViewModel(), id: String) {
+
     viewModel.getSchoolById(id = id)
     val state = viewModel.detailsState.value
     Column(
@@ -37,15 +38,15 @@ fun SchoolDetail(viewModel: SchoolViewModel = hiltViewModel(), id: String) {
             SchoolDetail(school = school)
         }
         if (state.isLoading) {
-            loadingIndicator()
+            LoadingIndicator()
         } else if (state.error.isNotBlank()) {
-            errorMessage(state = state)
+            ErrorMessage(state = state)
         }
     }
 }
 
 @Composable
-fun errorMessage(state: SchoolDetailsState) {
+fun ErrorMessage(state: SchoolDetailsState) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -84,33 +85,33 @@ fun SchoolDetail(school: School) {
             style = MaterialTheme.typography.body1,
             color = Color.Black
         )
-        if(school.english?.isNotEmpty() == true){
+        if (school.english.isNotEmpty()) {
             Text(
-                text = "English: "+school.english,
+                text = "English: " + school.english,
                 style = MaterialTheme.typography.body1,
                 color = Color.Black
             )
         }
 
-        if(school.math?.isNotEmpty() == true){
+        if (school.math.isNotEmpty()) {
             Text(
-                text = "Math: "+school.math,
+                text = "Math: " + school.math,
                 style = MaterialTheme.typography.body1,
                 color = Color.Black
             )
         }
 
-        if(school.science?.isNotEmpty() == true){
+        if (school.science.isNotEmpty()) {
             Text(
-                text = "Science :"+school.science,
+                text = "Science :" + school.science,
                 style = MaterialTheme.typography.body1,
                 color = Color.Black
             )
         }
 
-        if(school.social?.isNotEmpty() == true){
+        if (school.social.isNotEmpty()) {
             Text(
-                text = "Social: "+school.social,
+                text = "Social: " + school.social,
                 style = MaterialTheme.typography.body1,
                 color = Color.Black
             )

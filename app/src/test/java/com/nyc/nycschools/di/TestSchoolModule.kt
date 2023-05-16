@@ -14,5 +14,6 @@ class TestSchoolModule {
     @Provides
     fun provideSchoolService(retrofit: Retrofit): NYCService =
         retrofit.create(NYCService::class.java)
-
+// this could be used to wirte some API test's with mockwebserver with some custom json files for each API and covering error cases ..
+// taking as inpust from resource folder
 }

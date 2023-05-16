@@ -50,14 +50,25 @@ fun SchoolHomeContent(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        if (isInitialLoad.value && state.isLoading) {
-            loadingIndicator()
-        } else if (state.schools.isEmpty()) {
-            emptyListMessage()
-        } else if (state.error.isNotBlank()) {
-            errorMessage(state = state)
-        } else {
-            lazyList(state = state, navController = navController)
+
+        when {
+            isInitialLoad.value && state.isLoading -> {
+                LoadingIndicator()
+            }
+            state.schools.isEmpty() -> {
+                EmptyListMessage()
+            }
+            state.error.isNotBlank() -> {
+                ErrorMessage(state = state)
+            }
+            else -> {
+                LazyList(state = state){ schoolId ->
+                        val route = Screen.schoolDetailsRoute(schoolId = schoolId)
+                        navController.navigate(
+                            route = route
+                        )
+                }
+            }
         }
     }
 }
@@ -98,7 +109,7 @@ fun SchoolListItem(
 }
 
 @Composable
-fun lazyList(state: SchoolListState, navController: NavController) {
+fun LazyList(state: SchoolListState, onItemClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -112,19 +123,14 @@ fun lazyList(state: SchoolListState, navController: NavController) {
         items(state.schools) { school ->
             SchoolListItem(
                 school = school,
-                onItemClick = {
-                    val route = Screen.schoolDetailsRoute(school.id)
-                    navController.navigate(
-                        route = route
-                    )
-                }
+                onItemClick = { onItemClick(school.id)}
             )
         }
     }
 }
 
 @Composable
-fun emptyListMessage() {
+fun EmptyListMessage() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -133,7 +139,6 @@ fun emptyListMessage() {
         Text(
             text = "No Schools here, try again",
             color = MaterialTheme.colors.error,
-            textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
@@ -142,7 +147,7 @@ fun emptyListMessage() {
 }
 
 @Composable
-fun errorMessage(state: SchoolListState) {
+fun ErrorMessage(state: SchoolListState) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -160,7 +165,7 @@ fun errorMessage(state: SchoolListState) {
 }
 
 @Composable
-fun loadingIndicator() {
+fun LoadingIndicator() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

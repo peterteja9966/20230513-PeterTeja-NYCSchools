@@ -8,8 +8,8 @@ data class School(
     val zip: String,
     val schoolName: String,
     val id: String,
-    val math: String?,
-    val english: String?,
-    val social: String?,
-    val science: String?
+    val math: String,
+    val english: String,
+    val social: String,
+    val science: String
 )
